@@ -9,4 +9,7 @@ project(tactics)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 add_subdirectory(tactics)
