@@ -45,6 +45,47 @@ typedef enum {
 
 } ForwardType;
 
+// acquire runtime status by Runtime::get_current_status with following keys
+enum RuntimeStatus {
+  // get status whether this runtime support 16-bits float point arithmetic
+  STATUS_SUPPORT_FP16,
+
+  // get status whether this runtime support dot-product arithmetic
+  STATUS_SUPPORT_DOT_PRODUCT,
+
+  // get status whether this runtime support power-low (means low priority for
+  // opencl)
+  STATUS_SUPPORT_POWER_LOW,
+
+  // emum total number
+  STATUS_COUNT
+};
+
+struct RuntimeHint {
+  // 0: Defer, 1: Eager
+  int memoryAllocatorType = 0;
+  int winogradMemoryUsed = 3;
+
+  // 0-100, 50 means litter core has 50% capacity of large core
+  int cpuDecreaseRate = 50;
+  int dynamicQuantOption = 0;
+
+  // 0: Do not quantize kvcache, just store float
+  // 1: Only quantize key cache, use int8 asymmetric quantization
+  // 2: Only quantize value cache, use fp8 quantization
+  // 3: quantize both key and value cache as described above
+  int kvcacheQuantOption = 0;
+
+  // the kvcache size limit of each layer
+  // if the size of kvcache in memory exceeds the limit
+  // it will be moved to disk to save memory
+  // -1 for no limit
+  int kvcacheSizeLimit = -1;
+
+  // path of the kvcache directory
+  std::string kvcacheDirPath = "/tmp";
+};
+
 struct BackendConfig {
   enum MemoryMode { Memory_Normal = 0, Memory_High, Memory_Low };
 
@@ -136,12 +177,13 @@ public:
     // nothing to do
   }
   // callback after resize ops.
-  virtual bool on_resize_end() = 0;
+  virtual bool on_resize_end() { return false; };
 
   // callback before executing ops.
-  virtual void on_execute_begin() const = 0;
+  virtual void on_execute_begin() const {};
   // callback after executing ops.
-  virtual void on_execute_end() const = 0;
+  virtual void on_execute_end() const {};
+
   // virtual const Runtime* get_runtime() {
   //     return nullptr;
   // }
@@ -160,7 +202,9 @@ public:
   };
 
   // allocate buffer of tensor for given storage type.
-  virtual MemObj *on_acquire(const Tensor *tensor, StorageType storageType) = 0;
+  virtual MemObj *on_acquire(const Tensor *tensor, StorageType storageType) {
+    return nullptr;
+  };
 
   virtual bool on_select_dynamic_allocator(int index, int maxIndex) {
     return false;
@@ -171,11 +215,11 @@ public:
   }
 
   // clear all dynamic buffers.
-  virtual bool on_clear_buffer() = 0;
+  virtual bool on_clear_buffer() { return false; };
 
   // copy buffer from tensor to tensor.
   virtual void on_copy_buffer(const Tensor *srcTensor,
-                              const Tensor *dstTensor) const = 0;
+                              const Tensor *dstTensor) const {};
 
 public:
   // get forward type.
@@ -200,6 +244,119 @@ public:
 private:
   const ForwardType mType;
 };
+
+// Each backend belong to a runtime
+class Runtime {
+public:
+  // Origin Op -> (Compiler) -> New Op -> Backend
+  // Default use Compiler_Geometry, Origin Op -> Compiler_Geometry -> Little Op
+  // For serveral Backend, we can't use Geometry to decompose origin op, then it
+  // set Compiler_Origin
+  enum CompilerType {
+    Compiler_Geometry = 0,
+    Compiler_Origin = 1,
+    Compiler_Loop = 2,
+  };
+
+  enum AllocatorType {
+    Allocator_Defer = 0,
+    Allocator_Eager = 1,
+  };
+  void set_rumtime_hint(const RuntimeHint &hint) { mHint = hint; }
+  const RuntimeHint &hint() const { return mHint; }
+
+  virtual CompilerType on_get_compiler_type() const { return Compiler_Loop; }
+
+  virtual ~Runtime() = default;
+
+  // create backend
+  virtual Backend *on_create(const BackendConfig *config = nullptr) const {return nullptr;}
+
+  // reset runtime
+  virtual void on_reset(int numberThread, const BackendConfig *config,
+                       bool full) {
+    // Do nothing
+  }
+
+  // clear unuseful resource
+  virtual void on_gabage_collect(int level) {}
+
+  // Measure the memory it used in MB
+  virtual float on_get_memory_inmb() { return 0.0f; }
+
+  // If buffer is not nullptr, try copy cache, else delete cache
+  virtual bool on_set_cache(const void *buffer, size_t size) {
+    // default cache valid, avoid being reset
+    return true;
+  }
+
+  virtual std::pair<const void *, size_t> on_get_cache() {
+    return std::make_pair(nullptr, 0);
+  }
+  virtual int on_get_runtime_status(RuntimeStatus statusEnum) const { return 0; }
+  // If the info user set can't be match by runtime, return false and set real
+  // info
+  virtual bool on_check_info(Backend::Info &info) const { return true; }
+  struct OpInfo {
+    bool initCostLong;
+    float exeutionCost; // In ms
+    float initCost;     // In ms
+  };
+
+  // measure the cost for op with input and output tensors.
+  // virtual bool onMeasure(const std::vector<Tensor*>& inputs, const
+  // std::vector<Tensor*>& outputs,
+  //                                          const Op* op, OpInfo& dstInfo)
+  //                                          const {
+  //     return true;
+  // }
+
+  // // FIXME: Temply use to mask cache valid, in future will delete
+  // virtual void onMaskOpReady(const std::vector<Tensor*>& inputs, const
+  // std::vector<Tensor*>& outputs,
+  //                            const Op* op) {
+  //     // Do nothing
+  // }
+  // FIXME: Temply used, in future will refract
+  std::atomic_bool mCancelled = ATOMIC_VAR_INIT(false);
+  bool has_async_work() const;
+  void set_async_work(std::future<int> &&future);
+  void wait_async_work();
+
+private:
+  std::future<int> mFuture;
+  RuntimeHint mHint;
+};
+
+// abstract Runtime register
+class RuntimeCreator {
+public:
+  // initializer.
+  virtual ~RuntimeCreator() = default;
+
+  virtual Runtime *on_create(const Backend::Info &info) const {return nullptr;}
+
+  // Turn info to supported.
+  virtual bool on_valid(Backend::Info &info) const {
+    info.mode = Backend::Info::DIRECT;
+    return true;
+  }
+
+protected:
+  // deinitializer.
+  RuntimeCreator() = default;
+};
+
+// get registered backend creator for given forward type.
+
+const RuntimeCreator *get_extra_runtime_creator(ForwardType type);
+
+// register backend creator for given forward type.
+bool insert_extra_runtime_creator(ForwardType type,
+                                  const RuntimeCreator *creator,
+                                  bool needCheck = false);
+
+bool cpu_copy_buffer(const Tensor *srcTensor, const Tensor *dstTensor);
 
 } // namespace tactics
 

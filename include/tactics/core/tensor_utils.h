@@ -147,7 +147,8 @@ struct Tensor::InsideDescribe {
     uint32_t stageMask = 0;
   };
   std::shared_ptr<NativeInsideDescribe> m_content;
-  std::shared_ptr<Backend::MemObj> mem;
+  // SharedPtr type for assign
+  SharedPtr<Backend::MemObj> mem;
   inline Backend *getBackend() const { return backend; }
   inline void setBackend(Backend *bn) { backend = bn; }
 
