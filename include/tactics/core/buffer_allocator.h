@@ -1,3 +1,13 @@
+//===------------------------tactics/core/buffer_allocator.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===-------------------------------------------------------------------------------===//
+//
+/// This file defines the buffer_allocator
+///
+//===-------------------------------------------------------------------------------===//
 #ifndef TACTICS_CORE_BUFFER_ALLOCATOR_H
 #define TACTICS_CORE_BUFFER_ALLOCATOR_H
 

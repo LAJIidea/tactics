@@ -1,3 +1,13 @@
+//===------------------------tactics/core/tensor_utils.cpp------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===-----------------------------------------------------------------------------===//
+//
+/// This file defines the tensor utils implement
+///
+//===----------------------------------------------------------------------------===//
 #include "tactics/core/tensor_utils.h"
 #include "tactics/core/backend.h"
 #include <algorithm>

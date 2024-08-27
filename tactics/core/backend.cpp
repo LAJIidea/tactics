@@ -1,3 +1,13 @@
+//===------------------------tactics/core/backend.cpp------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===-----------------------------------------------------------------------===//
+//
+/// This file defines the backend base class and runtime base class implement
+///
+//===----------------------------------------------------------------------===//
 #include "tactics/core/backend.h"
 #include "tactics/core/tensor_utils.h"
 #include <cassert>

@@ -1,3 +1,13 @@
+//===------------------------tactics/core/memory_utils.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===---------------------------------------------------------------------------===//
+//
+/// This file defines the memory utils implement
+///
+//===--------------------------------------------------------------------------===//
 #include "tactics/core/memory_utils.h"
 #include <cassert>
 #include <stdint.h>

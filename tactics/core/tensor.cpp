@@ -1,3 +1,13 @@
+//===------------------------tactics/core/tensor.cpp------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===----------------------------------------------------------------------===//
+//
+/// This file defines the tensor class implement
+///
+//===----------------------------------------------------------------------===//
 #include "tactics/core/tensor.h"
 #include "HalideRuntime.h"
 #include "tactics/core/memory_utils.h"

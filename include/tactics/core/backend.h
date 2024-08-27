@@ -1,3 +1,13 @@
+//===------------------------tactics/core/backend.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===--------------------------------------------------------------------===//
+//
+/// This file defines the backend base class 
+///
+//===--------------------------------------------------------------------===//
 #ifndef TACTICS_CORE_BACKEND_H
 #define TACTICS_CORE_BACKEND_H
 

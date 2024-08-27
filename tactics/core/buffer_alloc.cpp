@@ -1,3 +1,13 @@
+//===------------------------tactics/core/buffer_alloc.cpp------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===-----------------------------------------------------------------------------===//
+//
+/// This file defines the buffer allocator implement
+///
+//===----------------------------------------------------------------------------===//
 #include "tactics/core/buffer_allocator.h"
 #include "tactics/core/memory_utils.h"
 #include <cassert>

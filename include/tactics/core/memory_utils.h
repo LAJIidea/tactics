@@ -1,3 +1,13 @@
+//===------------------------tactics/core/memory_utils.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===---------------------------------------------------------------------------===//
+//
+/// This file defines the memory utils
+///
+//===--------------------------------------------------------------------------===//
 #ifndef TACTICS_CORE_MEMORY_UTILS_H
 #define TACTICS_CORE_MEMORY_UTILS_H
 

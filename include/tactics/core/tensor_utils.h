@@ -1,3 +1,13 @@
+//===------------------------tactics/core/tensor_utils.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===---------------------------------------------------------------------------===//
+//
+/// This file defines the tensor utils
+///
+//===--------------------------------------------------------------------------===//
 #ifndef TACTICS_TENSOR_TENSOR_UTILS_H
 #define TACTICS_TENSOR_TENSOR_UTILS_H
 

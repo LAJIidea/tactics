@@ -1,14 +1,13 @@
-//===------------------------tactics/tensor/tensor.h------------------------===//
+//===------------------------tactics/core/tensor.h------------------------===//
 //
-// Copyright (c) RISC-X Organizations, see https://risc-x.org
-// This source code is licensed under the MIT license found in the
-// LICENSE file in the root directory of this source tree.
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
 //
-//===----------------------------------------------------------------------===//
+//===--------------------------------------------------------------------===//
 //
 /// This file defines the tensor
 ///
-//===----------------------------------------------------------------------===//
+//===--------------------------------------------------------------------===//
 
 #ifndef TACTICS_TENSOR_TENSOR_H
 #define TACTICS_TENSOR_TENSOR_H

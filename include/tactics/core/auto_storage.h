@@ -1,3 +1,13 @@
+//===------------------------tactics/core/auto_storage.h------------------------===//
+//
+// Copyright © 2018, Alibaba Group Holding Limited
+// Copy from MNN project
+//
+//===--------------------------------------------------------------------------===//
+//
+/// This file defines the storage utils
+///
+//===--------------------------------------------------------------------------===//
 #ifndef TACTICS_CORE_AUTO_STORAGE_H
 #define TACTICS_CORE_AUTO_STORAGE_H
 
