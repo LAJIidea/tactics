@@ -8,3 +8,5 @@ file(GLOB TACTICS_SRC
 add_library(tactics ${TACTICS_SRC})
 
 target_link_libraries(tactics tactics_core)
+
+add_subdirectory(python)
