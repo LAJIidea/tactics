@@ -13,4 +13,5 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(tactics)
+add_subdirectory(tpl)
 add_subdirectory(test)

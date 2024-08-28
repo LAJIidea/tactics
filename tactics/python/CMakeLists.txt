@@ -6,4 +6,5 @@ file(GLOB pybind_src
 
 pybind11_add_module(tactics_bind ${pybind_src})
 
-target_link_libraries(tactics_bind PRIVATE tactics)
+target_include_directories(tactics_bind PRIVATE ${PROJECT_SOURCE_DIR}/tpl/fmt/include)
+target_link_libraries(tactics_bind PRIVATE tactics fmt)
