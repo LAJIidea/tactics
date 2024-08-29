@@ -4,10 +4,15 @@
 #include <algorithm>
 #include <array>
 #include <math.h>
+#ifdef USE_SSE
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
 #include <x86intrin.h>
+#endif
+#endif
+#ifdef USE_RVV
+#include <riscv_vector.h>
 #endif
 
 namespace tactics {
@@ -190,6 +195,7 @@ template <typename T, int N> struct Vec {
   }
 };
 
+#ifdef USE_SSE
 template <> struct Vec<int32_t, 4> {
   using VecType = Vec<int32_t, 4>;
   using VecTypeArray = std::array<VecType, 4>;
@@ -470,8 +476,9 @@ template <> struct Vec<float, 4> {
     vec3.value = _mm_movehl_ps(tmp3, tmp1);
   }
 };
+#elif defined(USE_RVV)
 
-// #endif
+#endif
 
 } // namespace tactics
 
